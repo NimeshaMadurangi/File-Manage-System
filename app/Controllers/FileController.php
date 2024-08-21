@@ -4,15 +4,17 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\UploadModel;
+use App\Models\UserModel;
 
 class FileController extends BaseController
 {
-    public function index()
-    {
-        $uploadModel = new UploadModel();
-        $data['files'] = $uploadModel->findAll(); // Fetch all files from the database
-        return view('UploadForm', $data); // Pass the file data to the view
-    }
+    // public function index()
+    // {
+    //     $uploadmodel = new UploadModel();
+    //     $data['uploads'] = $model->findAll(); // Fetch all data from the uploads table
+
+    //     return view('AdminDashboard', $data);
+    // }
 
     public function upload()
     {
@@ -44,7 +46,22 @@ class FileController extends BaseController
             return redirect()->to('/upload'); // Redirect to a success page or any other page
         }
 
-        $data['files'] = $uploadModel->findAll(); // Ensure to pass the file data to the view if needed
+        $data['file'] = $uploadModel->findAll(); // Ensure to pass the file data to the view if needed
         return view('UploadForm', $data); // Reload the upload form view
     }
+
+    public function updateApprovalStatus()
+    {
+        $request = \Config\Services::request();
+        $data = $request->getJSON();
+        $id = $data->id;
+        $approved = $data->approved;
+
+        // Update the database
+        $model = new \App\Models\UploadModel();
+        $model->update($id, ['approved' => $approved]);
+
+        return $this->response->setJSON(['success' => true]);
+    }
+
 }

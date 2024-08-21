@@ -3,25 +3,27 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use App\Models\UserModel; // Import the UserModel
-use CodeIgniter\HTTP\ResponseInterface;
+use App\Models\UserModel;
+use App\Models\UploadModel;
 
 class AccessController extends BaseController
 {
     public function admin()
     {
         $userModel = new UserModel();
-        
-        // Get the count of users
-        $userCount = $userModel->countAllResults();
-
-        // Pass the user count to the view
-        return view('AdminDashboard', ['userCount' => $userCount]);
-
         $uploadModel = new UploadModel();
 
+        // Get the count of users
+        $userCount = $userModel->countAllResults();
+        
         // Fetch all data from the uploads table
-        $data['uploads'] = $uploadModel->findAll();
+        $uploads = $uploadModel->findAll();
+
+        // Pass both user count and uploads data to the view
+        return view('AdminDashboard', [
+            'userCount' => $userCount,
+            'uploads' => $uploads
+        ]);
     }
 
     public function photographer()
@@ -31,7 +33,10 @@ class AccessController extends BaseController
 
     public function manager()
     {
-        return view('ManagerDashboard');
+        $uploadModel = new UploadModel();
+        $uploads = $uploadModel->findAll(); // Fetch all records
+
+        return view('ManagerDashboard', ['uploads' => $uploads]);
     }
 
     public function fbteam()

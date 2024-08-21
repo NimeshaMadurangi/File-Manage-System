@@ -55,7 +55,7 @@
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" rows="4" placeholder="Enter a description..."></textarea>
+                <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter a description..."></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Upload</button>
         </form>

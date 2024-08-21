@@ -26,7 +26,7 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Users</a>
+                        <a class="nav-link" href="/users">Users</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Files</a>
@@ -75,11 +75,10 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                <?php if (!empty($results)) : ?>
-                    <?php foreach ($results as $row) : ?>
+                    <?php foreach ($uploads as $row) : ?>
                         <tr>
                             <td><?php echo esc($row['filename']); ?></td>
-                            <td><?php echo esc($row['created_at']); ?></td> <!-- Ensure the column exists -->
+                            <td><?php echo esc($row['created_at']); ?></td>
                             <td><?php echo esc($row['description']); ?></td>
                             <td>
                                 <!-- Preview content, e.g., thumbnail for images -->
@@ -93,15 +92,12 @@
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="<?= base_url('download/' . $row['filename']); ?>" class="btn btn-sm btn-primary">Download</a>
-                                <a href="<?= base_url('edit/' . $row['id']); ?>" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="<?= base_url('delete/' . $row['id']); ?>" class="btn btn-sm btn-danger">Delete</a>
+                                <a href="<?= base_url('download/' . $row['filename']); ?>" class="btn btn-sm" style="background-color: #254336; color: white;">Download</a>
+                                <a href="<?= base_url('edit/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #E0A75E; color: white;">Edit</a>
+                                <a href="<?= base_url('delete/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #800000; color: white;">Delete</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
-                <?php else : ?>
-                    <tr><td colspan="5">No data found</td></tr>
-                <?php endif; ?>
                 </tbody>
             </table>
         </div>

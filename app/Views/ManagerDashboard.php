@@ -41,8 +41,9 @@
         .table thead th {
             border-bottom: 2px solid #dee2e6;
         }
-        .thumbnail {
-            width: 100px;
+        .table td img.thumbnail,
+        .table td video.thumbnail {
+            width: 150px; /* Increased size */
             height: auto;
         }
         .toggle-switch {
@@ -81,6 +82,10 @@
         input:checked + .slider:before {
             transform: translateX(20px);
         }
+        .table th:nth-child(4), /* Preview column */
+        .table td:nth-child(4) {
+            width: 200px; /* Increased width for Preview column */
+        }
     </style>
 </head>
 <body>
@@ -112,7 +117,6 @@
 
     <!-- Main Content -->
     <div class="container mt-4">
-
         <!-- Table with Search -->
         <div class="table-container">
             <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search...">
@@ -123,46 +127,48 @@
                         <th>Date</th>
                         <th>Description</th>
                         <th>Preview</th>
-                        <th>Approval</th> <!-- New Approval column -->
+                        <th>Approval</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
-                    <tr>
-                        <td>file1.jpg</td>
-                        <td>2024-08-10</td>
-                        <td>Sample image file</td>
-                        <td><img src="file1.jpg" class="thumbnail" alt="Image"></td>
-                        <td>
-                            <label class="toggle-switch">
-                                <input type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </td> <!-- Toggle button for approval -->
-                        <td>
-                            <div class="d-flex mb-4">
-                                <a href="<?= base_url('download'); ?>" class="btn btn" style="background-color: #43766C; color: white;">Download</a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>video1.mp4</td>
-                        <td>2024-08-11</td>
-                        <td>Sample video file</td>
-                        <td><video class="thumbnail" controls><source src="video1.mp4" type="video/mp4"></video></td>
-                        <td>
-                            <label class="toggle-switch">
-                                <input type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </td> <!-- Toggle button for approval -->
-                        <td>
-                            <div class="d-flex mb-4">
-                                <a href="<?= base_url('download'); ?>" class="btn btn" style="background-color: #43766C; color: white;">Download</a>
-                            </div>
-                        </td>
-                    </tr>
-                    <!-- Add more rows as needed -->
+                    <?php if (!empty($uploads)) : ?>
+                        <?php foreach ($uploads as $upload) : ?>
+                            <tr>
+                                <td><?= esc($upload['filename']); ?></td>
+                                <td><?= esc($upload['created_at']); ?></td>
+                                <td><?= esc($upload['description']); ?></td>
+                                <td>
+                                    <?php 
+                                    $filePath = base_url('uploads/' . $upload['filename']);
+                                    $fileExt = pathinfo($upload['filename'], PATHINFO_EXTENSION);
+                                    if (in_array($fileExt, ['jpg', 'jpeg', 'png'])): ?>
+                                        <img src="<?= $filePath; ?>" class="thumbnail" alt="Image">
+                                    <?php elseif (in_array($fileExt, ['mp4', 'avi'])): ?>
+                                        <video class="thumbnail" controls>
+                                            <source src="<?= $filePath; ?>" type="video/<?= $fileExt; ?>">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    <?php else: ?>
+                                        <p>Unsupported file type</p>
+                                    <?php endif; ?>
+                                </td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" <?= $upload['approve'] ? 'checked' : ''; ?> data-id="<?= $upload['id']; ?>" class="approval-toggle">
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="d-flex mb-4">
+                                        <a href="<?= base_url('download/' . $upload['filename']); ?>" class="btn btn" style="background-color: #43766C; color: white;">Download</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else : ?>
+                        <tr><td colspan="6">No data found</td></tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
@@ -179,6 +185,30 @@
             rows.forEach(row => {
                 const text = row.textContent.toLowerCase();
                 row.style.display = text.includes(filter) ? '' : 'none';
+            });
+        });
+
+        // Toggle switch script to update approval status
+        document.querySelectorAll('.approval-toggle').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const id = this.dataset.id;
+                const isChecked = this.checked;
+                
+                fetch('<?= base_url('update_approval_status'); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id, approved: isChecked })
+                }).then(response => response.json())
+                  .then(data => {
+                      if (!data.success) {
+                          alert('Failed to approve');
+                      }
+                  }).catch(error => {
+                      console.error('Error:', error);
+                      alert('Error updating approval');
+                  });
             });
         });
     </script>

@@ -21,6 +21,8 @@
       $routes->post('/upload', 'FileController::upload');
 
 
+
+
       $routes->get('/login', 'UserController::login');
       $routes->post('/user/login', 'UserController::login');
 
@@ -32,8 +34,15 @@
       $routes->get('/logout', 'UserController::logout');
 
       $routes->get('/admin/dashboard', 'AccessController::admin');
+      $routes->get('admin', 'FileController::index');
       $routes->get('/photographer/dashboard', 'AccessController::photographer');
+
+      //Manager
       $routes->get('/manager/dashboard', 'AccessController::manager');
+      $routes->post('approve/(:num)', 'FileController::approve/$1');
+
+
+
       $routes->get('/fbteam/dashboard', 'AccessController::fbteam');
 
  });
