@@ -188,29 +188,31 @@
             });
         });
 
-        // Toggle switch script to update approval status
         document.querySelectorAll('.approval-toggle').forEach(toggle => {
-            toggle.addEventListener('change', function() {
-                const id = this.dataset.id;
-                const isChecked = this.checked;
-                
-                fetch('<?= base_url('update_approval_status'); ?>', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id, approved: isChecked })
-                }).then(response => response.json())
-                  .then(data => {
-                      if (!data.success) {
-                          alert('Failed to approve');
-                      }
-                  }).catch(error => {
-                      console.error('Error:', error);
-                      alert('Error updating approval');
-                  });
-            });
+    toggle.addEventListener('change', function() {
+        const id = this.dataset.id;
+        const isChecked = this.checked;
+        
+        fetch('<?= base_url('update_approval_status'); ?>', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id, approved: isChecked })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                alert('Failed to approve');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error updating approval');
         });
+    });
+});
+
     </script>
 </body>
 </html>

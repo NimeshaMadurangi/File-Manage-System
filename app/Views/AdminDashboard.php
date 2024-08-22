@@ -9,7 +9,12 @@
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        /* Your custom styles here */
+        /* Custom styles */
+        .search-bar {
+            width: 50%; /* Adjust the width as needed */
+            max-width: 300px; /* Maximum width */
+            min-width: 200px; /* Minimum width */
+        }
     </style>
 </head>
 <body>
@@ -26,10 +31,10 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/users">Users</a>
+                        <a class="nav-link" href="/users">User List</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Files</a>
+                        <a class="nav-link" href="/approved-uploads">Accept List</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="logoutLink">Logout</a>
@@ -41,6 +46,15 @@
 
     <!-- Main Content -->
     <div class="container mt-4">
+        <!-- Feedback Messages -->
+        <?php if (session()->getFlashdata('success')): ?>
+            <div class="alert alert-success"><?= session()->getFlashdata('success'); ?></div>
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+            <div class="alert alert-danger"><?= session()->getFlashdata('error'); ?></div>
+        <?php endif; ?>
+
         <div class="row">
             <!-- Users Count Card -->
             <div class="col-md-3 mb-4">
@@ -52,7 +66,16 @@
                     </div>
                 </div>
             </div>
-            <!-- Add other cards here -->
+            <div class="col-md-3 mb-4">
+                <div class="card text-white" style="background-color: #7C93C3;">
+                    <div class="card-body">
+                        <i class="fa-solid fa-file"></i>
+                        <h5 class="card-title">Files</h5>
+                        <p class="card-text fs-1"><?= esc($fileCount); ?></p>
+                    </div>
+                </div>
+            </div>
+            <!-- More cards here -->
         </div>
 
         <!-- Buttons -->
@@ -81,11 +104,11 @@
                             <td><?php echo esc($row['created_at']); ?></td>
                             <td><?php echo esc($row['description']); ?></td>
                             <td>
-                                <!-- Preview content, e.g., thumbnail for images -->
+                                <!-- Preview content-->
                                 <?php if (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])): ?>
                                     <img src="<?= base_url('uploads/' . $row['filename']); ?>" alt="Preview" style="width: 100px;">
                                 <?php elseif (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['mp4', 'avi'])): ?>
-                                    <video width="100" controls>
+                                    <video width="300" controls>
                                         <source src="<?= base_url('uploads/' . $row['filename']); ?>" type="video/mp4">
                                         Your browser does not support the video tag.
                                     </video>

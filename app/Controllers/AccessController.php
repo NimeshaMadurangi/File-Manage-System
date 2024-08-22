@@ -15,6 +15,8 @@ class AccessController extends BaseController
 
         // Get the count of users
         $userCount = $userModel->countAllResults();
+
+        $fileCount = $uploadModel->countAllResults();
         
         // Fetch all data from the uploads table
         $uploads = $uploadModel->findAll();
@@ -22,6 +24,7 @@ class AccessController extends BaseController
         // Pass both user count and uploads data to the view
         return view('AdminDashboard', [
             'userCount' => $userCount,
+            'fileCount' => $fileCount,
             'uploads' => $uploads
         ]);
     }
@@ -42,5 +45,16 @@ class AccessController extends BaseController
     public function fbteam()
     {
         return view('FBTeamDashboard');
+    }
+
+    public function viewApprovedUploads()
+    {
+        $uploadModel = new UploadModel();
+        
+        // Fetch only approved uploads where approve column is 1
+        $approvedUploads = $uploadModel->where('approve', 1)->findAll();
+
+        // Pass the approved uploads data to the view
+        return view('Accept', ['uploads' => $approvedUploads]);
     }
 }

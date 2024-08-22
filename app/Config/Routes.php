@@ -45,4 +45,11 @@
 
       $routes->get('/fbteam/dashboard', 'AccessController::fbteam');
 
+      $routes->get('/approved-uploads', 'AccessController::viewApprovedUploads');
+      $routes->post('update_approval_status', 'FileController::updateApprovalStatus');
+
+
+      $routes->get('delete/(:num)', 'FileController::delete/$1');
+
+
  });

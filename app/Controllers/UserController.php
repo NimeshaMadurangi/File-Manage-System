@@ -164,7 +164,7 @@ class UserController extends BaseController
         }
 
         // Load the view with user data
-        return view('edit_user', [
+        return view('Edit', [
             'user' => $user
         ]);
     }
