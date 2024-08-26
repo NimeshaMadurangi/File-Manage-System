@@ -32,6 +32,7 @@ class FileController extends BaseController
 
                 // Prepare the data to be saved in the database
                 $data = [
+                    'eventname'    => $eventname,
                     'filename'    => $newName,
                     'description' => $description,
                     'user_id'     => $userID, // Save the user ID

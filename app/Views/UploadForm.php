@@ -60,6 +60,10 @@
         <h2 class="text-center mb-4">Upload Files</h2>
         <form method="post" action="/upload" enctype="multipart/form-data">
             <div class="mb-3">
+                <label for="eventname" class="form-label">Event Name</label>
+                <input type="text" class="form-control" id="eventname" name="eventname" placeholder="Enter the event name...">
+            </div>
+            <div class="mb-3">
                 <label for="files" class="form-label">Select Images and Videos</label>
                 <input type="file" class="form-control" id="files" name="files[]" multiple accept="image/*,video/*">
                 <div class="form-text">You can select multiple files (images and videos).</div>

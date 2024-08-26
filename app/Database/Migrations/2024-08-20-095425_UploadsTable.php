@@ -14,6 +14,10 @@ class UploadsTable extends Migration
                 'unsigned'       => true,
                 'auto_increment' => true,
             ],
+            'eventname'    => [
+                'type'       => 'VARCHAR',
+                'constraint' => '250',
+            ],
             'filename'    => [
                 'type'       => 'VARCHAR',
                 'constraint' => '255',

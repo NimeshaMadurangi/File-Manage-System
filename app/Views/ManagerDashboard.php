@@ -14,36 +14,44 @@
         }
         .card {
             border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            height: 250px; /* Fixed height for cards */
+        }
+        .card-img {
+            width: 100%;
+            height: 150px; /* Fixed height for images/videos */
+            object-fit: cover;
         }
         .card-body {
             text-align: center;
-            position: relative;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
         }
         .card-body i {
-            font-size: 2.5rem;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            opacity: 0.2;
+            font-size: 1.5rem;
         }
         .search-bar {
             width: 100%;
             max-width: 300px;
             margin-bottom: 20px;
         }
-        .table-container {
-            overflow-x: auto;
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
-        .table {
-            border-collapse: separate;
-            border-spacing: 0 10px;
+        .gallery-item {
+            width: calc(25% - 20px); /* Adjust size based on your design */
         }
-        .table thead th {
-            border-bottom: 2px solid #dee2e6;
-        }
-        .table td img.thumbnail,
-        .table td video.thumbnail {
-            width: 150px; /* Increased size */
+        .gallery-item img,
+        .gallery-item video {
+            width: 100%;
             height: auto;
         }
         .toggle-switch {
@@ -82,10 +90,6 @@
         input:checked + .slider:before {
             transform: translateX(20px);
         }
-        .table th:nth-child(4), /* Preview column */
-        .table td:nth-child(4) {
-            width: 200px; /* Increased width for Preview column */
-        }
     </style>
 </head>
 <body>
@@ -102,13 +106,13 @@
                         <a class="nav-link active" aria-current="page" href="#">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Accept List</a>
+                        <a class="nav-link" href="/approved-uploads">Accept List</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Events</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Logout</a>
+                        <a class="nav-link" href="#" id="logoutLink">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -117,60 +121,38 @@
 
     <!-- Main Content -->
     <div class="container mt-4">
-        <!-- Table with Search -->
-        <div class="table-container">
-            <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search...">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Filename</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Preview</th>
-                        <th>Approval</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <?php if (!empty($uploads)) : ?>
-                        <?php foreach ($uploads as $upload) : ?>
-                            <tr>
-                                <td><?= esc($upload['filename']); ?></td>
-                                <td><?= esc($upload['created_at']); ?></td>
-                                <td><?= esc($upload['description']); ?></td>
-                                <td>
-                                    <?php 
-                                    $filePath = base_url('uploads/' . $upload['filename']);
-                                    $fileExt = pathinfo($upload['filename'], PATHINFO_EXTENSION);
-                                    if (in_array($fileExt, ['jpg', 'jpeg', 'png'])): ?>
-                                        <img src="<?= $filePath; ?>" class="thumbnail" alt="Image">
-                                    <?php elseif (in_array($fileExt, ['mp4', 'avi'])): ?>
-                                        <video class="thumbnail" controls>
-                                            <source src="<?= $filePath; ?>" type="video/<?= $fileExt; ?>">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    <?php else: ?>
-                                        <p>Unsupported file type</p>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <label class="toggle-switch">
-                                        <input type="checkbox" <?= $upload['approve'] ? 'checked' : ''; ?> data-id="<?= $upload['id']; ?>" class="approval-toggle">
-                                        <span class="slider"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <div class="d-flex mb-4">
-                                        <a href="<?= base_url('download/' . $upload['filename']); ?>" class="btn btn" style="background-color: #43766C; color: white;">Download</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else : ?>
-                        <tr><td colspan="6">No data found</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+        <!-- Search Bar -->
+        <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search...">
+        <!-- Gallery -->
+        <div class="gallery">
+            <?php if (!empty($uploads)) : ?>
+                <?php foreach ($uploads as $upload) : ?>
+                    <div class="card gallery-item">
+                        <div class="card-body">
+                            <h5 class="card-title"><?= esc($upload['filename']); ?></h5>
+                            <label class="toggle-switch">
+                                <input type="checkbox" <?= $upload['approve'] ? 'checked' : ''; ?> data-id="<?= $upload['id']; ?>" class="approval-toggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <?php 
+                        $filePath = base_url('uploads/' . $upload['filename']);
+                        $fileExt = pathinfo($upload['filename'], PATHINFO_EXTENSION);
+                        if (in_array($fileExt, ['jpg', 'jpeg', 'png'])): ?>
+                            <img src="<?= $filePath; ?>" class="card-img" alt="Image">
+                        <?php elseif (in_array($fileExt, ['mp4', 'avi'])): ?>
+                            <video class="card-img" controls>
+                                <source src="<?= $filePath; ?>" type="video/<?= $fileExt; ?>">
+                                Your browser does not support the video tag.
+                            </video>
+                        <?php else: ?>
+                            <p>Unsupported file type</p>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <div class="col-12">No data found</div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -181,38 +163,48 @@
     <script>
         document.getElementById('searchInput').addEventListener('keyup', function() {
             const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(filter) ? '' : 'none';
+            const cards = document.querySelectorAll('.gallery-item');
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                card.style.display = title.includes(filter) ? '' : 'none';
             });
         });
 
         document.querySelectorAll('.approval-toggle').forEach(toggle => {
-    toggle.addEventListener('change', function() {
-        const id = this.dataset.id;
-        const isChecked = this.checked;
-        
-        fetch('<?= base_url('update_approval_status'); ?>', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id, approved: isChecked })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                alert('Failed to approve');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Error updating approval');
-        });
-    });
-});
+            toggle.addEventListener('change', function() {
+                const id = this.dataset.id;
+                const isChecked = this.checked;
 
+                fetch('<?= base_url('update_approval_status'); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id, approved: isChecked })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.success) {
+                        alert('Failed to approve');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating approval');
+                });
+            });
+        });
     </script>
+
+    <!-- Logout Confirmation Script -->
+    <script>
+        document.getElementById('logoutLink').addEventListener('click', function(event) {
+            event.preventDefault();
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/logout';
+            }
+        });
+    </script>
+    
 </body>
 </html>
