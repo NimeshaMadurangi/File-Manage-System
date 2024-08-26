@@ -16,16 +16,21 @@ class AccessController extends BaseController
         // Get the count of users
         $userCount = $userModel->countAllResults();
 
+        // Get the count of files
         $fileCount = $uploadModel->countAllResults();
-        
-        // Fetch all data from the uploads table
-        $uploads = $uploadModel->findAll();
 
-        // Pass both user count and uploads data to the view
+        // Fetch the latest 10 uploads
+        $latestUploads = $uploadModel->orderBy('created_at', 'DESC')->limit(10)->findAll();
+
+        // Fetch all uploads for search functionality
+        $allUploads = $uploadModel->findAll();
+
+        // Pass data to the view
         return view('AdminDashboard', [
             'userCount' => $userCount,
             'fileCount' => $fileCount,
-            'uploads' => $uploads
+            'uploads' => $latestUploads,
+            'allUploads' => $allUploads,
         ]);
     }
 

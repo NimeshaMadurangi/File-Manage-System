@@ -98,13 +98,14 @@
                     </tr>
                 </thead>
                 <tbody id="tableBody">
+                    <!-- Display the latest 10 uploads -->
                     <?php foreach ($uploads as $row) : ?>
                         <tr>
                             <td><?php echo esc($row['filename']); ?></td>
                             <td><?php echo esc($row['created_at']); ?></td>
                             <td><?php echo esc($row['description']); ?></td>
                             <td>
-                                <!-- Preview content-->
+                                <!-- Preview content -->
                                 <?php if (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])): ?>
                                     <img src="<?= base_url('uploads/' . $row['filename']); ?>" alt="Preview" style="width: 100px;">
                                 <?php elseif (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['mp4', 'avi'])): ?>
@@ -146,6 +147,8 @@
                 const text = row.textContent.toLowerCase();
                 row.style.display = text.includes(filter) ? '' : 'none';
             });
+
+            // Optional: Implement an AJAX call to load all files if needed
         });
     </script>
 </body>
