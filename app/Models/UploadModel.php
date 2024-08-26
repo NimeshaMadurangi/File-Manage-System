@@ -20,4 +20,13 @@ class UploadModel extends Model
     {
         return $this->update($id, ['approve' => $status]);
     }
+
+    public function search($query)
+    {
+        return $this->groupStart()
+                    ->like('filename', $query)
+                    ->orLike('description', $query)
+                    ->groupEnd()
+                    ->findAll();
+    }
 }

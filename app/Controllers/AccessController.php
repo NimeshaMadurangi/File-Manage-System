@@ -19,18 +19,23 @@ class AccessController extends BaseController
         // Get the count of files
         $fileCount = $uploadModel->countAllResults();
 
-        // Fetch the latest 10 uploads
-        $latestUploads = $uploadModel->orderBy('created_at', 'DESC')->limit(10)->findAll();
+        // Handle search query
+        $searchQuery = $this->request->getGet('search');
 
-        // Fetch all uploads for search functionality
-        $allUploads = $uploadModel->findAll();
+        if ($searchQuery) {
+            // Fetch uploads that match the search query
+            $uploads = $uploadModel->search($searchQuery);
+        } else {
+            // Fetch the latest 10 uploads
+            $uploads = $uploadModel->orderBy('created_at', 'DESC')->limit(10)->findAll();
+        }
 
         // Pass data to the view
         return view('AdminDashboard', [
             'userCount' => $userCount,
             'fileCount' => $fileCount,
-            'uploads' => $latestUploads,
-            'allUploads' => $allUploads,
+            'uploads' => $uploads,
+            'searchQuery' => $searchQuery, // Pass search query to the view
         ]);
     }
 
@@ -42,9 +47,22 @@ class AccessController extends BaseController
     public function manager()
     {
         $uploadModel = new UploadModel();
-        $uploads = $uploadModel->findAll(); // Fetch all records
 
-        return view('ManagerDashboard', ['uploads' => $uploads]);
+        // Handle search query
+        $searchQuery = $this->request->getGet('search');
+
+        if ($searchQuery) {
+            // Fetch uploads that match the search query
+            $uploads = $uploadModel->search($searchQuery);
+        } else {
+            // Fetch all records
+            $uploads = $uploadModel->findAll();
+        }
+
+        return view('ManagerDashboard', [
+            'uploads' => $uploads,
+            'searchQuery' => $searchQuery, // Pass search query to the view
+        ]);
     }
 
     public function fbteam()
@@ -55,7 +73,7 @@ class AccessController extends BaseController
     public function viewApprovedUploads()
     {
         $uploadModel = new UploadModel();
-        
+
         // Fetch only approved uploads where approve column is 1
         $approvedUploads = $uploadModel->where('approve', 1)->findAll();
 

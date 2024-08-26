@@ -9,11 +9,32 @@
     <!-- Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        /* Custom styles */
-        .search-bar {
-            width: 50%; /* Adjust the width as needed */
-            max-width: 300px; /* Maximum width */
-            min-width: 200px; /* Minimum width */
+        .gallery-item {
+            border: 2px solid #ddd;
+            border-radius: .25rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+        .gallery-item img, .gallery-item video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .gallery-item .card-body {
+            padding: .75rem;
+            flex: 1;
+            overflow: hidden;
+        }
+        .gallery-item .btn {
+            margin-right: .5rem;
+        }
+        @media (max-width: 768px) {
+            .gallery-item {
+                margin-bottom: .5rem;
+            }
         }
     </style>
 </head>
@@ -55,7 +76,7 @@
             <div class="alert alert-danger"><?= session()->getFlashdata('error'); ?></div>
         <?php endif; ?>
 
-        <div class="row">
+        <div class="row mb-4">
             <!-- Users Count Card -->
             <div class="col-md-3 mb-4">
                 <div class="card text-white" style="background-color: #7C93C3;">
@@ -84,71 +105,56 @@
             <a href="<?= base_url('upload'); ?>" class="btn btn" style="background-color: #55679C; color: white;">Upload</a>
         </div>
 
-        <!-- Table with Search -->
-        <div class="table-container">
-            <input type="text" id="searchInput" class="form-control search-bar mb-3" placeholder="Search...">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Filename</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Preview</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    <!-- Display the latest 10 uploads -->
-                    <?php foreach ($uploads as $row) : ?>
-                        <tr>
-                            <td><?php echo esc($row['filename']); ?></td>
-                            <td><?php echo esc($row['created_at']); ?></td>
-                            <td><?php echo esc($row['description']); ?></td>
-                            <td>
-                                <!-- Preview content -->
-                                <?php if (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])): ?>
-                                    <img src="<?= base_url('uploads/' . $row['filename']); ?>" alt="Preview" style="width: 100px;">
-                                <?php elseif (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['mp4', 'avi'])): ?>
-                                    <video width="300" controls>
-                                        <source src="<?= base_url('uploads/' . $row['filename']); ?>" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
-                                <?php endif; ?>
-                            </td>
-                            <td>
-                                <a href="<?= base_url('download/' . $row['filename']); ?>" class="btn btn-sm" style="background-color: #254336; color: white;">Download</a>
-                                <a href="<?= base_url('edit/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #E0A75E; color: white;">Edit</a>
-                                <a href="<?= base_url('delete/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #800000; color: white;">Delete</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
+        <!-- Search Bar -->
+        <div class="mb-4">
+            <form method="get" action="<?= base_url('admin/dashboard'); ?>">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Search uploads..." value="<?= esc($searchQuery); ?>">
+                    <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Gallery View -->
+        <div class="row">
+            <?php foreach ($uploads as $row) : ?>
+                <div class="col-md-3 mb-4">
+                    <div class="gallery-item card">
+                        <div class="card-body">
+                            <!-- Preview content -->
+                            <?php if (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])): ?>
+                                <img src="<?= base_url('uploads/' . $row['filename']); ?>" alt="Preview">
+                            <?php elseif (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['mp4', 'avi'])): ?>
+                                <video controls>
+                                    <source src="<?= base_url('uploads/' . $row['filename']); ?>" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                            <?php endif; ?>
+
+                            <h5 class="card-title"><?= esc($row['filename']); ?></h5>
+                            <p class="card-text"><?= esc($row['description']); ?></p>
+                            <p class="card-text text-muted"><?= esc($row['created_at']); ?></p>
+
+                            <a href="<?= base_url('download/' . $row['filename']); ?>" class="btn btn-sm" style="background-color: #254336; color: white;">Download</a>
+                            <a href="<?= base_url('edit/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #E0A75E; color: white;">Edit</a>
+                            <a href="<?= base_url('delete/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #800000; color: white;">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Search Script -->
+    <!-- Logout Confirmation Script -->
     <script>
         document.getElementById('logoutLink').addEventListener('click', function(event) {
-            event.preventDefault(); // Prevent the default link behavior
+            event.preventDefault();
             if (confirm('Are you sure you want to logout?')) {
-                // If user clicks "OK", redirect to the logout route
                 window.location.href = '/logout';
             }
-        });
-
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const filter = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(filter) ? '' : 'none';
-            });
-
-            // Optional: Implement an AJAX call to load all files if needed
         });
     </script>
 </body>

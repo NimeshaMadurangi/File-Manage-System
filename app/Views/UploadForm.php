@@ -26,16 +26,27 @@
             border-radius: 30px;
             padding: 10px 15px;
         }
-        .upload-card .btn-primary {
-            background: #1E2A5E;
-            border: none;
-            border-radius: 30px;
-            padding: 10px;
-            width: 100%;
-            font-size: 16px;
+        button {
+            background: #1E2A5E; /* Primary button color */
+            border: none; /* Remove default border */
+            border-radius: 30px; /* Rounded corners */
+            padding: 10px; /* Padding inside the button */
+            width: 100%; /* Full width button */
+            font-size: 16px; /* Font size */
+            color: #fff; /* Text color */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background 0.3s ease; /* Smooth background color transition */
+            margin-top: 10px; /* Add some space above the button */
         }
-        .upload-card .btn-primary:hover {
-            background: #7C93C3;
+        button:hover {
+            background: #7C93C3; /* Background color on hover */
+        }
+        button.cancel-btn {
+            background: #1E2A5E; 
+            color: #fff; /* Text color */
+        }
+        button.cancel-btn:hover {
+            background: #7C93C3; /* Hover color for cancel button */
         }
         .form-text {
             color: #6c757d;
@@ -58,10 +69,16 @@
                 <textarea class="form-control" id="description" name="description" rows="4" placeholder="Enter a description..."></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Upload</button>
+            <button type="button" class="btn cancel-btn" onclick="redirectToDashboard()">Cancel</button>
         </form>
     </div>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function redirectToDashboard() {
+            window.location.href = '/admin/dashboard';
+        }
+    </script>
 </body>
 </html>
