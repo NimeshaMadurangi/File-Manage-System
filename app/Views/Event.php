@@ -31,7 +31,7 @@
         <div class="card shadow-sm mb-4">
             <div class="card-body">
                
-                <form action="<?= base_url('file/manage-folder') ?>" method="post">
+                <form action="<?= base_url('event/manage-folder') ?>" method="post">
                     <div class="mb-3">
                         <label for="new_folder" class="form-label">Create New Folder:</label>
                         <input type="text" class="form-control" id="new_folder" name="new_folder" placeholder="Enter folder name" required>
