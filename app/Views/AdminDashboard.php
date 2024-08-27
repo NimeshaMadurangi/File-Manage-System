@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <!-- Bootstrap CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome CSS -->
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         .gallery-item {
@@ -39,7 +39,7 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+   
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1E2A5E;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Admin Dashboard</a>
@@ -65,9 +65,9 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    
     <div class="container mt-4">
-        <!-- Feedback Messages -->
+       
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success"><?= session()->getFlashdata('success'); ?></div>
         <?php endif; ?>
@@ -77,7 +77,7 @@
         <?php endif; ?>
 
         <div class="row mb-4">
-            <!-- Users Count Card -->
+            
             <div class="col-md-3 mb-4">
                 <div class="card text-white" style="background-color: #7C93C3;">
                     <div class="card-body">
@@ -96,16 +96,16 @@
                     </div>
                 </div>
             </div>
-            <!-- More cards here -->
+            
         </div>
 
-        <!-- Buttons -->
+       
         <div class="d-flex mb-4">
             <a href="<?= base_url('register'); ?>" class="btn btn" style="background-color: #55679C; color: white; margin-right: 10px;">Register</a>
             <a href="<?= base_url('upload'); ?>" class="btn btn" style="background-color: #55679C; color: white;">Upload</a>
         </div>
 
-        <!-- Search Bar -->
+      
         <div class="mb-4">
             <form method="get" action="<?= base_url('admin/dashboard'); ?>">
                 <div class="input-group">
@@ -115,13 +115,13 @@
             </form>
         </div>
 
-        <!-- Gallery View -->
+        
         <div class="row">
             <?php foreach ($uploads as $row) : ?>
                 <div class="col-md-3 mb-4">
                     <div class="gallery-item card">
                         <div class="card-body">
-                            <!-- Preview content -->
+                            
                             <?php if (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])): ?>
                                 <img src="<?= base_url('uploads/' . $row['filename']); ?>" alt="Preview">
                             <?php elseif (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['mp4', 'avi'])): ?>
@@ -145,10 +145,10 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Logout Confirmation Script -->
+   
     <script>
         document.getElementById('logoutLink').addEventListener('click', function(event) {
             event.preventDefault();

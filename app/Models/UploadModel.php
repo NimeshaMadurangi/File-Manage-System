@@ -8,9 +8,9 @@ class UploadModel extends Model
 {
     protected $table = 'uploads';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['eventname','filename', 'description', 'user_id', 'approve', 'created_at'];
+    protected $allowedFields = ['filename', 'description', 'user_id', 'approve', 'created_at'];
 
-    // Method to save the file data
+   
     public function saveFileData($data)
     {
         return $this->insert($data);

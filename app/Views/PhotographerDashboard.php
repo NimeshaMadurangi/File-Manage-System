@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <!-- Bootstrap CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome CSS -->
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         .navbar-dark-red {
@@ -48,7 +48,7 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1E2A5E;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Photographer Dashboard</a>
@@ -74,15 +74,15 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+  
     <div class="container mt-4">
             
-        <!-- Buttons -->
+      
         <div class="d-flex mb-4">
             <a href="<?= base_url('upload'); ?>" class="btn btn" style="background-color: #55679C; color: white;">Upload</a>
         </div>
 
-        <!-- Table with Search -->
+        
         <div class="table-container">
             <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search...">
             <table class="table table-striped table-hover">
@@ -120,16 +120,15 @@
                             </div>
                         </td>
                     </tr>
-                    <!-- Add more rows as needed -->
+                    
                 </tbody>
             </table>
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
+ 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Search Script -->
     <script>
         document.getElementById('searchInput').addEventListener('keyup', function() {
             const filter = this.value.toLowerCase();

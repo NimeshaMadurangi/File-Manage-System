@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manager Dashboard</title>
-    <!-- Bootstrap CSS -->
+   
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome CSS -->
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         .navbar-dark-red {
@@ -17,11 +17,11 @@
             overflow: hidden;
             margin-bottom: 20px;
             position: relative;
-            height: 250px; /* Fixed height for cards */
+            height: 250px;
         }
         .card-img {
             width: 100%;
-            height: 150px; /* Fixed height for images/videos */
+            height: 150px;
             object-fit: cover;
         }
         .card-body {
@@ -47,7 +47,7 @@
             gap: 20px;
         }
         .gallery-item {
-            width: calc(25% - 20px); /* Adjust size based on your design */
+            width: calc(25% - 20px); 
         }
         .gallery-item img,
         .gallery-item video {
@@ -93,7 +93,7 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+ 
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1E2A5E;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Manager Dashboard</a>
@@ -119,11 +119,11 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+
     <div class="container mt-4">
-        <!-- Search Bar -->
+      
         <input type="text" id="searchInput" class="form-control search-bar" placeholder="Search...">
-        <!-- Gallery -->
+       
         <div class="gallery">
             <?php if (!empty($uploads)) : ?>
                 <?php foreach ($uploads as $upload) : ?>
@@ -156,10 +156,10 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Search Script -->
+    
     <script>
         document.getElementById('searchInput').addEventListener('keyup', function() {
             const filter = this.value.toLowerCase();
@@ -196,7 +196,7 @@
         });
     </script>
 
-    <!-- Logout Confirmation Script -->
+    
     <script>
         document.getElementById('logoutLink').addEventListener('click', function(event) {
             event.preventDefault();

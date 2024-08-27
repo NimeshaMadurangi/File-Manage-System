@@ -4,51 +4,82 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\UploadModel;
-use App\Models\UserModel;
+use CodeIgniter\Files\File;
 
 class FileController extends BaseController
 {
     public function index()
     {
-        
-        return view('UploadForm');
+        $uploadModel = new UploadModel();
+        $data['existingFolders'] = $this->getExistingFolders();
+        return view('UploadForm', $data);
     }
 
     public function upload()
-{
-    helper(['form', 'url']); // Load the form and URL helpers
+    {
+        helper(['form', 'url']);
 
-    $uploadModel = new UploadModel();
-    $userID = session()->get('user_id'); // Retrieve the user ID from the session
+        $uploadModel = new UploadModel();
+        $userID = session()->get('user_id');
 
-    if ($this->request->getMethod() == 'post') {
-        $files = $this->request->getFiles(); // Get all uploaded files
-        $description = $this->request->getPost('description'); // Get the description from the form
+        if ($this->request->getMethod() == 'post') {
+            $files = $this->request->getFiles();
+            $description = $this->request->getPost('description');
+            $newFolderName = $this->request->getPost('new_folder');
+            $selectedFolder = $this->request->getPost('existing_folder');
 
-        foreach ($files['files'] as $file) {
-            if ($file->isValid() && !$file->hasMoved()) { // Check if the file is valid and hasn't been moved
-                $newName = $file->getRandomName(); // Generate a random file name
-                $file->move(ROOTPATH . 'public/uploads', $newName); // Move the file to the uploads directory in the project
+           
+            $targetFolder = $selectedFolder ? $selectedFolder : 'uploads';
 
-                // Prepare the data to be saved in the database
-                $data = [
-                    'eventname'    => $eventname,
-                    'filename'    => $newName,
-                    'description' => $description,
-                    'user_id'     => $userID, // Save the user ID
-                    'created_at'  => date('Y-m-d H:i:s'), // Save the current timestamp
-                ];
-                $uploadModel->saveFileData($data); // Save the file data to the database
+            if ($newFolderName) {
+               
+                $targetFolder = 'uploads/' . $newFolderName;
+                if (!is_dir($targetFolder)) {
+                    mkdir($targetFolder, 0777, true);
+                }
+            }
+
+            foreach ($files['files'] as $file) {
+                if ($file->isValid() && !$file->hasMoved()) {
+                    $newName = $file->getRandomName();
+                    $file->move(ROOTPATH . 'public/' . $targetFolder, $newName);
+
+                   
+                    $data = [
+                        'filename'     => $newName,
+                        'description'  => $description,
+                        'user_id'      => $userID,
+                        'folder'       => $targetFolder,
+                        'created_at'   => date('Y-m-d H:i:s'),
+                    ];
+                    $uploadModel->saveFileData($data);
+                }
+            }
+
+            return redirect()->to('/upload')->with('success', 'Files uploaded successfully');
+        }
+
+        $data['existingFolders'] = $this->getExistingFolders();
+        return view('UploadForm', $data);
+    }
+
+    private function getExistingFolders()
+    {
+
+        $folders = [];
+        $dir = ROOTPATH . 'public/uploads';
+
+        if (is_dir($dir)) {
+            $items = scandir($dir);
+            foreach ($items as $item) {
+                if ($item != '.' && $item != '..' && is_dir($dir . '/' . $item)) {
+                    $folders[] = $item;
+                }
             }
         }
 
-        return redirect()->to('/upload'); // Redirect to a success page or any other page
+        return $folders;
     }
-
-    $data['file'] = $uploadModel->findAll(); // Ensure to pass the file data to the view if needed
-    return view('UploadForm', $data); // Reload the upload form view
-}
-
 
     public function updateApprovalStatus()
     {
@@ -64,7 +95,7 @@ class FileController extends BaseController
         if ($uploadModel->update($id, $data)) {
             return $this->response->setJSON(['success' => true]);
         } else {
-            return $this->response->setJSON(['success' => false], ResponseInterface::HTTP_BAD_REQUEST);
+            return $this->response->setJSON(['success' => false], 400);
         }
     }
 
@@ -74,22 +105,20 @@ class FileController extends BaseController
         $file = $uploadModel->find($id);
 
         if ($file) {
-            // Delete the file from the server
-            $filePath = WRITEPATH . 'uploads/' . $file['filename'];
+            
+            $filePath = ROOTPATH . 'public/' . $file['folder'] . '/' . $file['filename'];
             if (file_exists($filePath)) {
-                unlink($filePath); // Delete the file from the server
+                unlink($filePath); 
             }
 
-            // Delete the file record from the database
+          
             $uploadModel->delete($id);
 
-            // Redirect to the admin dashboard with a success message
+            
             return redirect()->to('/admin/dashboard')->with('success', 'File deleted successfully');
         } else {
-            // If file not found, show an error
+           
             return redirect()->to('/admin/dashboard')->with('error', 'File not found');
         }
     }
-
-
 }

@@ -39,7 +39,7 @@
         }
     </style>
     <script>
-        // Redirect after 5 seconds
+      
         setTimeout(function() {
             window.location.href = 'login.php';
         }, 5000);
@@ -53,7 +53,7 @@
         <div class="splash-text">
             Welcome to DLB Draw Manage..!
         </div>
-        <!-- <img src="https://via.placeholder.com/600x300" alt="Splash Image" class="splash-image"> -->
+       
         <div>
             <a href="/login" class="btn btn-primary splash-btn">Go to Login</a>
         </div>

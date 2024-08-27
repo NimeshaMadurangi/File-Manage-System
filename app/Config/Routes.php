@@ -52,4 +52,9 @@
       $routes->get('delete/(:num)', 'FileController::delete/$1');
 
 
+      $routes->get('event', 'EventController::index');
+      $routes->post('event/manage-folder', 'EventController::manageFolder');
+
+
+
  });

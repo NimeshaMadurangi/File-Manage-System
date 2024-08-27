@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approved</title>
-    <!-- Bootstrap CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .gallery-item {
@@ -13,8 +13,8 @@
         .gallery-item img,
         .gallery-item video {
             width: 100%;
-            height: 200px; /* Set a fixed height */
-            object-fit: cover; /* Maintain aspect ratio and cover the entire area */
+            height: 200px;
+            object-fit: cover;
             border-radius: 10px;
         }
         .gallery-item .caption {
@@ -33,16 +33,16 @@
             transition: color 0.3s;
         }
         .action-icons .download-icon:hover {
-            color: #D61355; /* Dark green on hover */
+            color: #D61355;
         }
         .action-icons .share-icon:hover {
-            color: #D61355; /* Dark blue on hover */
+            color: #D61355;
         }
         .gallery-item .caption p {
-            color: #555; /* Grey text color */
+            color: #555;
         }
     </style>
-    <!-- Font Awesome for icons -->
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 </head>
 <body>
@@ -60,7 +60,7 @@
                     <div class="col-md-4 col-sm-6 gallery-item">
                         <div class="card">
                             <div class="card-body">
-                                <!-- Preview content -->
+                               
                                 <?php if (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])): ?>
                                     <img src="<?= base_url('uploads/' . $row['filename']); ?>" alt="Preview">
                                 <?php elseif (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['mp4', 'avi'])): ?>
@@ -69,12 +69,12 @@
                                         Your browser does not support the video tag.
                                     </video>
                                 <?php endif; ?>
-                                <!-- Caption -->
+                               
                                 <div class="caption">
                                     <p><strong><?= esc($row['filename']); ?></strong></p>
                                     <p><?= esc($row['description']); ?></p>
                                     <p><small><?= esc($row['created_at']); ?></small></p>
-                                    <!-- Action icons -->
+                                   
                                     <div class="action-icons">
                                         <a href="<?= base_url('uploads/' . $row['filename']); ?>" download>
                                             <i class="fas fa-download download-icon"></i>
@@ -92,9 +92,9 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
+   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Share functionality -->
+   
     <script>
         function shareContent(url) {
             if (navigator.share) {
