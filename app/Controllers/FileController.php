@@ -22,20 +22,19 @@ class FileController extends BaseController
         $uploadModel = new UploadModel();
         $userID = session()->get('user_id');
 
-        if ($this->request->getMethod() == 'post') {
+        if ($this->request->getMethod() === 'post') {
             $files = $this->request->getFiles();
             $description = $this->request->getPost('description');
-            $newFolderName = $this->request->getPost('new_folder');
-            $selectedFolder = $this->request->getPost('existing_folder');
+            $newFolderName = trim($this->request->getPost('new_folder'));
+            $selectedFolder = trim($this->request->getPost('existing_folder'));
 
-           
-            $targetFolder = $selectedFolder ? $selectedFolder : 'uploads';
+            // Determine the target folder
+            $targetFolder = $selectedFolder ? 'uploads/' . $selectedFolder : 'uploads';
 
-            if ($newFolderName) {
-               
+            if (!empty($newFolderName)) {
                 $targetFolder = 'uploads/' . $newFolderName;
-                if (!is_dir($targetFolder)) {
-                    mkdir($targetFolder, 0777, true);
+                if (!is_dir(ROOTPATH . 'public/' . $targetFolder)) {
+                    mkdir(ROOTPATH . 'public/' . $targetFolder, 0777, true);
                 }
             }
 
@@ -44,7 +43,7 @@ class FileController extends BaseController
                     $newName = $file->getRandomName();
                     $file->move(ROOTPATH . 'public/' . $targetFolder, $newName);
 
-                   
+                    // Prepare data to save in the database
                     $data = [
                         'filename'     => $newName,
                         'description'  => $description,
@@ -52,7 +51,13 @@ class FileController extends BaseController
                         'folder'       => $targetFolder,
                         'created_at'   => date('Y-m-d H:i:s'),
                     ];
-                    $uploadModel->saveFileData($data);
+
+                    // Save file data to the database
+                    if (!$uploadModel->saveFileData($data)) {
+                        return redirect()->back()->with('error', 'Failed to save file data');
+                    }
+                } else {
+                    return redirect()->back()->with('error', 'Failed to upload file: ' . $file->getName());
                 }
             }
 
@@ -65,14 +70,13 @@ class FileController extends BaseController
 
     private function getExistingFolders()
     {
-
         $folders = [];
         $dir = ROOTPATH . 'public/uploads';
 
         if (is_dir($dir)) {
             $items = scandir($dir);
             foreach ($items as $item) {
-                if ($item != '.' && $item != '..' && is_dir($dir . '/' . $item)) {
+                if ($item !== '.' && $item !== '..' && is_dir($dir . '/' . $item)) {
                     $folders[] = $item;
                 }
             }
@@ -83,9 +87,9 @@ class FileController extends BaseController
 
     public function updateApprovalStatus()
     {
-        $json = $this->request->getJSON();
-        $id = $json->id;
-        $approved = $json->approved ? 1 : 0;
+        $json = $this->request->getJSON(true);
+        $id = $json['id'];
+        $approved = $json['approved'] ? 1 : 0;
 
         $uploadModel = new UploadModel();
         $data = [
@@ -105,19 +109,17 @@ class FileController extends BaseController
         $file = $uploadModel->find($id);
 
         if ($file) {
-            
             $filePath = ROOTPATH . 'public/' . $file['folder'] . '/' . $file['filename'];
             if (file_exists($filePath)) {
                 unlink($filePath); 
             }
 
-          
-            $uploadModel->delete($id);
-
-            
-            return redirect()->to('/admin/dashboard')->with('success', 'File deleted successfully');
+            if ($uploadModel->delete($id)) {
+                return redirect()->to('/admin/dashboard')->with('success', 'File deleted successfully');
+            } else {
+                return redirect()->to('/admin/dashboard')->with('error', 'Failed to delete file record');
+            }
         } else {
-           
             return redirect()->to('/admin/dashboard')->with('error', 'File not found');
         }
     }

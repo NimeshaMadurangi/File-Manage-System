@@ -57,27 +57,23 @@
 <body>
     <div class="upload-card">
         <h2 class="text-center mb-4">Upload Files</h2>
-        <form method="post" action="/upload" enctype="multipart/form-data">
+        <?= form_open_multipart('/upload') ?>
             <div class="mb-3">
                 <label for="files" class="form-label">Select Images and Videos</label>
                 <input type="file" class="form-control" id="files" name="files[]" multiple accept="image/*,video/*">
-                <!-- <div class="form-text">You can select multiple files (images and videos).</div> -->
             </div>
             <div class="mb-3">
                 <label for="new_folder" class="form-label">Create New Folder</label>
-                <input type="text" class="form-control" id="new_folder" name="new_folder" placeholder="Enter folder name">
-                <!-- <div class="form-text">Leave blank if you don't want to create a new folder.</div> -->
+                <input type="text" class="form-control" id="new_folder" name="new_folder" placeholder="Enter folder name" oninput="toggleExistingFolder()">
             </div>
             <div class="mb-3">
                 <label for="existing_folder" class="form-label">Select Existing Folder</label>
-                <select class="form-control" id="existing_folder" name="existing_folder">
+                <select class="form-control" id="existing_folder" name="existing_folder" onchange="toggleNewFolder()">
                     <option value="">-- Select a folder --</option>
-                    
                     <?php foreach ($existingFolders as $folder): ?>
                         <option value="<?= $folder ?>"><?= $folder ?></option>
                     <?php endforeach; ?>
                 </select>
-                <!-- <div class="form-text">Choose a folder to upload your files.</div> -->
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
@@ -85,12 +81,21 @@
             </div>
             <button type="submit" class="btn btn-primary">Upload</button>
             <button type="button" class="btn cancel-btn" onclick="redirectToDashboard()">Cancel</button>
-        </form>
+        <?= form_close() ?>
     </div>
 
-  
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function toggleNewFolder() {
+            const existingFolder = document.getElementById('existing_folder').value;
+            document.getElementById('new_folder').disabled = existingFolder !== "";
+        }
+
+        function toggleExistingFolder() {
+            const newFolder = document.getElementById('new_folder').value.trim();
+            document.getElementById('existing_folder').disabled = newFolder !== "";
+        }
+
         function redirectToDashboard() {
             window.location.href = '/admin/dashboard';
         }

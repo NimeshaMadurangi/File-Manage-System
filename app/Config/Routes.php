@@ -1,60 +1,51 @@
 <?php
- use CodeIgniter\Router\RouteCollection;
+
+use CodeIgniter\Router\RouteCollection;
 
 /**
  * @var RouteCollection $routes
  */
 
- $routes->group('', ['namespace' => 'App\Controllers'], function ($routes) {
+$routes->group('', ['namespace' => 'App\Controllers'], function ($routes) {
+    // Home
+    $routes->get('/', 'UserController::index');
 
-  $routes->get('/', 'UserController::index');
+    // User-related routes
+    $routes->get('/register', 'UserController::register');
+    $routes->post('/user/store', 'UserController::store');
+    $routes->get('/users', 'UserController::listUsers');
+    $routes->get('/users/edit/(:num)', 'UserController::edit/$1');
+    $routes->post('/users/edit/(:num)', 'UserController::edit/$1');
 
-  //User
-  $routes->get('/register', 'UserController::register');
-  $routes->post('user/store', 'UserController::store');
-  $routes->get('/users', 'UserController::listUsers');
-  $routes->get('users/edit/(:num)', 'UserController::edit/$1');
-  $routes->post('users/edit/(:num)', 'UserController::edit/$1');
+    // File-related routes
+    $routes->get('/upload', 'FileController::index');
+    $routes->post('/upload', 'FileController::upload');
+    $routes->post('/update_approval_status', 'FileController::updateApprovalStatus');
+    $routes->get('/delete/(:num)', 'FileController::delete/$1');
     
-    //FileController
-      $routes->get('/upload', 'FileController::index');
-      $routes->post('/upload', 'FileController::upload');
+    // Login/Logout routes
+    $routes->get('/login', 'UserController::login');
+    $routes->post('/user/login', 'UserController::login');
+    $routes->get('/logout', 'UserController::logout');
 
+    // Admin Dashboard routes
+    $routes->get('/admin/dashboard', 'AccessController::admin');
+    $routes->get('/admin', 'FileController::index'); // This might be redundant if /upload already points to FileController::index
 
+    // Photographer Dashboard routes
+    $routes->get('/photographer/dashboard', 'AccessController::photographer');
 
+    // Manager Dashboard routes
+    $routes->get('/manager/dashboard', 'AccessController::manager');
+    $routes->post('/approve/(:num)', 'FileController::approve/$1'); // Ensure there's an approve method in FileController
 
-      $routes->get('/login', 'UserController::login');
-      $routes->post('/user/login', 'UserController::login');
+    // FB Team Dashboard routes
+    $routes->get('/fbteam/dashboard', 'AccessController::fbteam');
 
-      // $routes->get('/login', 'UserController::login');
-      // $routes->post('/login', 'UserController::login');
+    // Approved Uploads Gallery
+    $routes->get('/approved-uploads', 'AccessController::viewApprovedUploads');
 
- 
-
-      $routes->get('/logout', 'UserController::logout');
-
-      $routes->get('/admin/dashboard', 'AccessController::admin');
-      $routes->get('admin', 'FileController::index');
-      $routes->get('/photographer/dashboard', 'AccessController::photographer');
-
-      //Manager
-      $routes->get('/manager/dashboard', 'AccessController::manager');
-      $routes->post('approve/(:num)', 'FileController::approve/$1');
-
-
-
-      $routes->get('/fbteam/dashboard', 'AccessController::fbteam');
-
-      $routes->get('/approved-uploads', 'AccessController::viewApprovedUploads');
-      $routes->post('update_approval_status', 'FileController::updateApprovalStatus');
-
-
-      $routes->get('delete/(:num)', 'FileController::delete/$1');
-
-
-      $routes->get('event', 'EventController::index');
-      $routes->post('event/manage-folder', 'EventController::manageFolder');
-
-
-
- });
+    // Event management routes
+    $routes->get('/event', 'EventController::index');
+    $routes->post('/event/manage-folder', 'EventController::manageFolder');
+});

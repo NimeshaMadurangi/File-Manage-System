@@ -26,6 +26,15 @@ class UploadsTable extends Migration
                 'type'       => 'INT',
                 'unsigned'   => true,
             ],
+            'folder'      => [
+                'type'       => 'VARCHAR',
+                'constraint' => '255',
+                'null'       => true,
+            ],
+            'approve'     => [
+                'type'       => 'TINYINT',
+                'default'    => 0,
+            ],
             'created_at'  => [
                 'type' => 'DATETIME',
                 'null' => true,
