@@ -12,9 +12,9 @@ class UserController extends BaseController
 
     public function __construct()
     {
-        // Initialize session
         $this->session = \Config\Services::session();
     }
+
 
     public function index()
     {
@@ -22,99 +22,63 @@ class UserController extends BaseController
     }
 
     public function login()
-    {
-        // Check if the request method is POST
-        if ($this->request->getMethod() === 'post') {
-            $userModel = new UserModel();
-
-            // Get the input values
-            $email = $this->request->getPost('email');
-            $password = $this->request->getPost('password');
-
-            // Validate input
-            $validation = \Config\Services::validation();
-            $validation->setRules([
-                'email' => 'required|valid_email',
-                'password' => 'required|min_length[6]'
-            ]);
-
-            if (!$validation->withRequest($this->request)->run()) {
-                return redirect()->back()->with('errors', $validation->getErrors())->withInput();
-            }
-
-            // Check if the user exists
-            $user = $userModel->where('email', $email)->first();
-
-            if ($user && password_verify($password, $user['password'])) {
-                // Set session data
-                $this->session->set([
-                    'user_id' => $user['id'],
-                    'user_role' => $user['role'],
-                    'isLoggedIn' => true,
-                ]);
-
-                // Redirect based on role
-                switch ($user['role']) {
-                    case 'admin':
-                        return redirect()->to('/admin/dashboard');
-                    case 'photographer':
-                        return redirect()->to('/photographer/dashboard');
-                    case 'manager':
-                        return redirect()->to('/manager/dashboard');
-                    case 'fbteam':
-                        return redirect()->to('/fbteam/dashboard');
-                    default:
-                        return redirect()->to('/login')->with('error', 'Invalid role');
-                }
-            } else {
-                return redirect()->to('/login')->with('error', 'Invalid login credentials');
-            }
-        }
-
-        // Render the login view if not a POST request
-        return view('login');
-    }
-
-    public function register()
-    {
-        return view('register');
-    }
-
-    public function store()
-    {
-        log_message('info', 'Store method called');
-
-        $validationRules = [
-            'username' => 'required|string|max_length[255]',
-            'email'    => 'required|valid_email|is_unique[users.email]',
-            'password' => 'required|min_length[6]',
-            'confirmPassword' => 'required|matches[password]',
-            'role'     => 'required|in_list[admin,manager,photographer,fbteam]',
-        ];
-
-        if (!$this->validate($validationRules)) {
-            $errors = $this->validator->getErrors();
-            log_message('error', 'Validation Errors: ' . json_encode($errors));
-            return redirect()->back()->withInput()->with('errors', $errors);
-        }
-
+{
+    // Check if the request method is POST
+    if ($this->request->getMethod() === 'post') {
         $userModel = new UserModel();
 
-        $data = [
-            'username' => $this->request->getPost('username'),
-            'email'    => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT), // Hash password
-            'role'     => $this->request->getPost('role'),
-        ];
+        // Get the input values
+        $email = $this->request->getPost('email');
+        $password = $this->request->getPost('password');
 
-        if ($userModel->save($data)) {
-            return redirect()->to('/login')->with('success', 'Registration successful. Please log in.');
+        // Validate input
+        $validation = \Config\Services::validation();
+        $validation->setRules([
+            'email' => 'required|valid_email',
+            'password' => 'required|min_length[6]'
+        ]);
+
+        if (!$validation->withRequest($this->request)->run()) {
+            return redirect()->back()->with('errors', $validation->getErrors())->withInput();
+        }
+
+        // Check if the user exists
+        $user = $userModel->where('email', $email)->first();
+
+        if ($user && password_verify($password, $user['password'])) {
+            // Set session data
+            $this->session->set([
+                'user_id' => $user['id'],
+                'user_role' => $user['role'],
+                'isLoggedIn' => true,
+            ]);
+
+            // Debugging: Log the role and session data
+            log_message('info', 'User role: ' . $user['role']);
+            log_message('info', 'Session data: ' . json_encode($this->session->get()));
+
+            // Redirect based on role
+            switch ($user['role']) {
+                case 'admin':
+                    return redirect()->to('/admin/dashboard');
+                case 'photographer':
+                    return redirect()->to('/photographer/dashboard');
+                case 'manager':
+                    return redirect()->to('/manager/dashboard');
+                case 'fbteam':
+                    return redirect()->to('/fbteam/dashboard');
+                default:
+                    return redirect()->to('/login')->with('error', 'Invalid role');
+            }
         } else {
-            $errors = $userModel->errors();
-            log_message('error', 'Failed to save user data: ' . json_encode($errors));
-            return redirect()->back()->with('error', 'Failed to register user. Please try again.');
+            return redirect()->to('/login')->with('error', 'Invalid login credentials');
         }
     }
+
+    // Render the login view if not a POST request
+    return view('login');
+}
+
 
     public function listUsers()
     {

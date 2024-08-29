@@ -24,9 +24,11 @@ $routes->group('', ['namespace' => 'App\Controllers'], function ($routes) {
     $routes->get('/delete/(:num)', 'FileController::delete/$1');
     
     // Login/Logout routes
-    $routes->get('/login', 'UserController::login');
-    $routes->post('/user/login', 'UserController::login');
-    $routes->get('/logout', 'UserController::logout');
+    // Login/Logout routes
+$routes->get('/login', 'UserController::login');    // Display login form
+$routes->post('/login', 'UserController::login');   // Process login form submission
+$routes->get('/logout', 'UserController::logout');  // Handle logout
+
 
     // Admin Dashboard routes
     $routes->get('/admin/dashboard', 'AccessController::admin');
@@ -44,8 +46,4 @@ $routes->group('', ['namespace' => 'App\Controllers'], function ($routes) {
 
     // Approved Uploads Gallery
     $routes->get('/approved-uploads', 'AccessController::viewApprovedUploads');
-
-    // Event management routes
-    $routes->get('/event', 'EventController::index');
-    $routes->post('/event/manage-folder', 'EventController::manageFolder');
 });

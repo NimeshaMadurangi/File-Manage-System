@@ -59,10 +59,6 @@
         <h2 class="text-center mb-4">Upload Files</h2>
         <?= form_open_multipart('/upload') ?>
             <div class="mb-3">
-                <label for="files" class="form-label">Select Images and Videos</label>
-                <input type="file" class="form-control" id="files" name="files[]" multiple accept="image/*,video/*">
-            </div>
-            <div class="mb-3">
                 <label for="new_folder" class="form-label">Create New Folder</label>
                 <input type="text" class="form-control" id="new_folder" name="new_folder" placeholder="Enter folder name" oninput="toggleExistingFolder()">
             </div>
@@ -74,6 +70,10 @@
                         <option value="<?= $folder ?>"><?= $folder ?></option>
                     <?php endforeach; ?>
                 </select>
+            </div>
+            <div class="mb-3">
+                <label for="files" class="form-label">Select Images and Videos</label>
+                <input type="file" class="form-control" id="files" name="files[]" multiple accept="image/*,video/*">
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>

@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         .gallery-item {
@@ -39,7 +37,6 @@
     </style>
 </head>
 <body>
-   
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #1E2A5E;">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Admin Dashboard</a>
@@ -65,9 +62,7 @@
         </div>
     </nav>
 
-    
     <div class="container mt-4">
-       
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success"><?= session()->getFlashdata('success'); ?></div>
         <?php endif; ?>
@@ -77,7 +72,6 @@
         <?php endif; ?>
 
         <div class="row mb-4">
-            
             <div class="col-md-3 mb-4">
                 <div class="card text-white" style="background-color: #7C93C3;">
                     <div class="card-body">
@@ -96,16 +90,13 @@
                     </div>
                 </div>
             </div>
-            
         </div>
 
-       
         <div class="d-flex mb-4">
             <a href="<?= base_url('register'); ?>" class="btn btn" style="background-color: #55679C; color: white; margin-right: 10px;">Register</a>
             <a href="<?= base_url('upload'); ?>" class="btn btn" style="background-color: #55679C; color: white;">Upload</a>
         </div>
 
-      
         <div class="mb-4">
             <form method="get" action="<?= base_url('admin/dashboard'); ?>">
                 <div class="input-group">
@@ -115,20 +106,25 @@
             </form>
         </div>
 
-        
         <div class="row">
             <?php foreach ($uploads as $row) : ?>
                 <div class="col-md-3 mb-4">
                     <div class="gallery-item card">
                         <div class="card-body">
-                            
-                            <?php if (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['jpg', 'jpeg', 'png'])): ?>
-                                <img src="<?= base_url('uploads/' . $row['filename']); ?>" alt="Preview">
-                            <?php elseif (in_array(pathinfo($row['filename'], PATHINFO_EXTENSION), ['mp4', 'avi'])): ?>
+                            <?php 
+                            $filePath = base_url('uploads/' . $row['filename']);
+                            $fileExtension = strtolower(pathinfo($row['filename'], PATHINFO_EXTENSION));
+                            ?>
+
+                            <?php if (in_array($fileExtension, ['jpg', 'jpeg', 'png'])): ?>
+                                <img src="<?= $filePath; ?>" alt="Preview">
+                            <?php elseif (in_array($fileExtension, ['mp4', 'avi'])): ?>
                                 <video controls>
-                                    <source src="<?= base_url('uploads/' . $row['filename']); ?>" type="video/mp4">
+                                    <source src="<?= $filePath; ?>" type="video/<?= $fileExtension; ?>">
                                     Your browser does not support the video tag.
                                 </video>
+                            <?php else: ?>
+                                <p>Unsupported file type</p>
                             <?php endif; ?>
 
                             <h5 class="card-title"><?= esc($row['filename']); ?></h5>
@@ -145,10 +141,8 @@
         </div>
     </div>
 
-    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-   
     <script>
         document.getElementById('logoutLink').addEventListener('click', function(event) {
             event.preventDefault();

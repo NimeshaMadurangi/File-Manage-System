@@ -28,4 +28,9 @@ class UploadModel extends Model
                     ->groupEnd()
                     ->findAll();
     }
+
+    public function getDistinctFolders()
+    {
+        return $this->select('folder')->distinct()->findColumn('folder');
+    }
 }
