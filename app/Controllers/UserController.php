@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\UserModel;
-use CodeIgniter\HTTP\ResponseInterface;
+use CodeIgniter\Exceptions\PageNotFoundException;
 
 class UserController extends BaseController
 {
@@ -15,128 +15,68 @@ class UserController extends BaseController
         $this->session = \Config\Services::session();
     }
 
-
     public function index()
     {
-        return view('Splash');
+        return view('splash');
     }
 
     public function login()
 {
-    // Check if the request method is POST
-    if ($this->request->getMethod() === 'post') {
-        $userModel = new UserModel();
-
-        // Get the input values
-        $email = $this->request->getPost('email');
-        $password = $this->request->getPost('password');
-
-        // Validate input
-        $validation = \Config\Services::validation();
-        $validation->setRules([
-            'email' => 'required|valid_email',
-            'password' => 'required|min_length[6]'
-        ]);
-
-        if (!$validation->withRequest($this->request)->run()) {
-            return redirect()->back()->with('errors', $validation->getErrors())->withInput();
-        }
-
-        // Check if the user exists
-        $user = $userModel->where('email', $email)->first();
-
-        if ($user && password_verify($password, $user['password'])) {
-            // Set session data
-            $this->session->set([
-                'user_id' => $user['id'],
-                'user_role' => $user['role'],
-                'isLoggedIn' => true,
-            ]);
-
-            // Debugging: Log the role and session data
-            log_message('info', 'User role: ' . $user['role']);
-            log_message('info', 'Session data: ' . json_encode($this->session->get()));
-
-            // Redirect based on role
-            switch ($user['role']) {
-                case 'admin':
-                    return redirect()->to('/admin/dashboard');
-                case 'photographer':
-                    return redirect()->to('/photographer/dashboard');
-                case 'manager':
-                    return redirect()->to('/manager/dashboard');
-                case 'fbteam':
-                    return redirect()->to('/fbteam/dashboard');
-                default:
-                    return redirect()->to('/login')->with('error', 'Invalid role');
-            }
-        } else {
-            return redirect()->to('/login')->with('error', 'Invalid login credentials');
-        }
+    // Check if user is already logged in and redirect to the appropriate dashboard
+    if ($this->session->get('isLoggedIn')) {
+        return $this->redirectBasedOnRole($this->session->get('role'));
     }
 
-    // Render the login view if not a POST request
-    return view('login');
+    return view('login'); // Make sure this view file exists
 }
 
-
-    public function listUsers()
-    {
-        $userModel = new UserModel();
-        $users = $userModel->findAll(); // Fetch all users
-
-        // Pass the list of users to the view
-        return view('UserList', ['users' => $users]);
-    }
-
-    public function edit($id = null)
-    {
-        $userModel = new UserModel();
-
-        // Fetch user data from the database
-        $user = $userModel->find($id);
-
-        if (!$user) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('User not found');
-        }
-
-        if ($this->request->getMethod() === 'post') {
-            // Validate form input
-            $validation = \Config\Services::validation();
-            $validation->setRules([
-                'username' => 'required|min_length[3]|max_length[20]',
-                'email' => 'required|valid_email',
-                'role' => 'required'
-            ]);
-
-            if (!$validation->withRequest($this->request)->run()) {
-                // If validation fails, load the view with validation errors
-                return view('edit_user', [
-                    'user' => $user,
-                    'validation' => $validation
-                ]);
-            }
-
-            // Update user data
-            $userModel->update($id, [
-                'username' => $this->request->getPost('username'),
-                'email' => $this->request->getPost('email'),
-                'role' => $this->request->getPost('role')
-            ]);
-
-            return redirect()->to('/users');
-        }
-
-        // Load the view with user data
-        return view('Edit', [
-            'user' => $user
-        ]);
-    }
 
     public function logout()
     {
         // Destroy the session and redirect to login
         $this->session->destroy();
         return redirect()->to('/login');
+    }
+
+    public function register()
+    {
+        return view('register');
+    }
+
+    public function store()
+    {
+        // Define validation rules
+        $validationRules = [
+            'username' => 'required|min_length[3]|max_length[20]',
+            'email'    => 'required|valid_email',
+            'password' => 'required|min_length[6]|matches[confirmPassword]',
+            'confirmPassword' => 'required'
+        ];
+
+        // Validate the input data
+        if (!$this->validate($validationRules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        // Check if user already exists
+        $userModel = new UserModel();
+        if ($userModel->where('email', $this->request->getPost('email'))->first()) {
+            return redirect()->back()->withInput()->with('error', 'Email already in use.');
+        }
+
+        // Get input data
+        $userData = [
+            'username' => $this->request->getPost('username'),
+            'email'    => $this->request->getPost('email'),
+            'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
+            'role'     => $this->request->getPost('role')
+        ];
+
+        // Save user data to the database
+        if ($userModel->save($userData)) {
+            return redirect()->to('/users')->with('success', 'User registered successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Failed to register user.')->withInput();
+        }
     }
 }

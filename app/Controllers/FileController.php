@@ -47,7 +47,7 @@ class FileController extends BaseController
                     $data = [
                         'filename'     => $newName,
                         'description'  => $description,
-                        'user_id'      => $userID,
+                        // 'user_id'      => $userID,
                         'folder'       => $targetFolder,
                         'created_at'   => date('Y-m-d H:i:s'),
                     ];

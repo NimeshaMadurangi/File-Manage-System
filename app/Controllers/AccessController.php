@@ -9,35 +9,40 @@ use App\Models\UploadModel;
 class AccessController extends BaseController
 {
     public function admin()
-{
-    $userModel = new UserModel();
-    $uploadModel = new UploadModel();
+    {
+        $userModel = new UserModel();
+        $uploadModel = new UploadModel();
 
-    $userCount = $userModel->countAllResults();
+        // Get the count of users
+        $userCount = $userModel->countAllResults();
 
-    $fileCount = $uploadModel->countAllResults();
+        // Get the count of files
+        $fileCount = $uploadModel->countAllResults();
 
-    $folderCount = $uploadModel->countAllResults();
+        // Handle search query
+        $searchQuery = $this->request->getGet('search');
 
-    $searchQuery = $this->request->getGet('search');
+        if ($searchQuery) {
+            // Fetch uploads that match the search query
+            $uploads = $uploadModel->like('filename', $searchQuery)
+                                   ->orLike('description', $searchQuery)
+                                   ->orderBy('created_at', 'DESC')
+                                   ->findAll();
+        } else {
+            // Fetch the latest 10 uploads
+            $uploads = $uploadModel->orderBy('created_at', 'DESC')
+                                   ->limit(10)
+                                   ->findAll();
+        }
 
-    if ($searchQuery) {
-        $uploads = $uploadModel->search($searchQuery);
-    } else {
-        $uploads = $uploadModel->orderBy('created_at', 'DESC')->limit(10)->findAll();
+        // Pass data to the view
+        return view('AdminDashboard', [
+            'userCount' => $userCount,
+            'fileCount' => $fileCount,
+            'uploads' => $uploads,
+            'searchQuery' => $searchQuery, // Pass search query to the view
+        ]);
     }
-
-    $folders = $uploadModel->select('folder')->distinct()->findColumn('folder');
-
-    return view('AdminDashboard', [
-        'userCount' => $userCount,
-        'fileCount' => $fileCount,
-        'uploads' => $uploads,
-        'searchQuery' => $searchQuery,
-        'folders' => $folders,
-    ]);
-}
-
 
     public function photographer()
     {
@@ -53,10 +58,14 @@ class AccessController extends BaseController
 
         if ($searchQuery) {
             // Fetch uploads that match the search query
-            $uploads = $uploadModel->search($searchQuery);
+            $uploads = $uploadModel->like('filename', $searchQuery)
+                                   ->orLike('description', $searchQuery)
+                                   ->orderBy('created_at', 'DESC')
+                                   ->findAll();
         } else {
             // Fetch all records
-            $uploads = $uploadModel->findAll();
+            $uploads = $uploadModel->orderBy('created_at', 'DESC')
+                                   ->findAll();
         }
 
         return view('ManagerDashboard', [
@@ -75,7 +84,9 @@ class AccessController extends BaseController
         $uploadModel = new UploadModel();
 
         // Fetch only approved uploads where approve column is 1
-        $approvedUploads = $uploadModel->where('approve', 1)->findAll();
+        $approvedUploads = $uploadModel->where('approve', 1)
+                                       ->orderBy('created_at', 'DESC')
+                                       ->findAll();
 
         // Pass the approved uploads data to the view
         return view('Accept', ['uploads' => $approvedUploads]);

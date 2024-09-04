@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -19,8 +20,7 @@
             padding: 30px;
             background: #fff;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
+            width: 350px;
         }
         .login-card .form-control {
             border-radius: 30px;
@@ -42,34 +42,23 @@
             text-align: center;
             margin-top: 10px;
         }
-        @media (max-width: 576px) {
-            .login-card {
-                padding: 20px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="login-card">
         <h2 class="text-center mb-4">Login</h2>
-        <form action="/login" method="post">
+        <form method="post" action="<?= site_url('user/login'); ?>">
             <div class="mb-3">
-                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+                <input type="email" name="email" class="form-control" placeholder="Email" required>
             </div>
             <div class="mb-3">
-                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
-                    <label class="form-check-label" for="rememberMe">Remember me</label>
-                </div>
-                <a href="/forgot-password" class="text-decoration-none">Forgot Password?</a>
+                <input type="password" name="password" class="form-control" placeholder="Password" required>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
-        <p class="form-text mt-3">Don't have an account? <a href="/register" class="text-decoration-none">Sign Up</a></p>
+        <p class="form-text mt-3">Don't have an account? <a href="/register" class="text-decoration-none">Register</a></p>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

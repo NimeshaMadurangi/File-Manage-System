@@ -29,6 +29,10 @@
         .gallery-item .btn {
             margin-right: .5rem;
         }
+        .navbar-dark .navbar-nav .nav-link.active {
+            background-color: #55679C;
+            border-radius: .25rem;
+        }
         @media (max-width: 768px) {
             .gallery-item {
                 margin-bottom: .5rem;
@@ -63,6 +67,7 @@
     </nav>
 
     <div class="container mt-4">
+        <!-- Success and Error Flash Messages -->
         <?php if (session()->getFlashdata('success')): ?>
             <div class="alert alert-success"><?= session()->getFlashdata('success'); ?></div>
         <?php endif; ?>
@@ -71,11 +76,12 @@
             <div class="alert alert-danger"><?= session()->getFlashdata('error'); ?></div>
         <?php endif; ?>
 
+        <!-- Stats Cards -->
         <div class="row mb-4">
             <div class="col-md-3 mb-4">
                 <div class="card text-white" style="background-color: #7C93C3;">
-                    <div class="card-body">
-                        <i class="fa-solid fa-users"></i>
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <i class="fa-solid fa-users fa-2x mb-2"></i>
                         <h5 class="card-title">Users</h5>
                         <p class="card-text fs-1"><?= esc($userCount); ?></p>
                     </div>
@@ -83,8 +89,8 @@
             </div>
             <div class="col-md-3 mb-4">
                 <div class="card text-white" style="background-color: #7C93C3;">
-                    <div class="card-body">
-                        <i class="fa-solid fa-file"></i>
+                    <div class="card-body d-flex flex-column align-items-center">
+                        <i class="fa-solid fa-file fa-2x mb-2"></i>
                         <h5 class="card-title">Files</h5>
                         <p class="card-text fs-1"><?= esc($fileCount); ?></p>
                     </div>
@@ -92,11 +98,13 @@
             </div>
         </div>
 
+        <!-- Action Buttons -->
         <div class="d-flex mb-4">
             <a href="<?= base_url('register'); ?>" class="btn btn" style="background-color: #55679C; color: white; margin-right: 10px;">Register</a>
             <a href="<?= base_url('upload'); ?>" class="btn btn" style="background-color: #55679C; color: white;">Upload</a>
         </div>
 
+        <!-- Search Form -->
         <div class="mb-4">
             <form method="get" action="<?= base_url('admin/dashboard'); ?>">
                 <div class="input-group">
@@ -106,11 +114,12 @@
             </form>
         </div>
 
+        <!-- Uploads Gallery -->
         <div class="row">
             <?php foreach ($uploads as $row) : ?>
                 <div class="col-md-3 mb-4">
                     <div class="gallery-item card">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column">
                             <?php 
                             $filePath = base_url('uploads/' . $row['filename']);
                             $fileExtension = strtolower(pathinfo($row['filename'], PATHINFO_EXTENSION));
@@ -127,13 +136,15 @@
                                 <p>Unsupported file type</p>
                             <?php endif; ?>
 
-                            <h5 class="card-title"><?= esc($row['filename']); ?></h5>
+                            <h5 class="card-title mt-2"><?= esc($row['filename']); ?></h5>
                             <p class="card-text"><?= esc($row['description']); ?></p>
                             <p class="card-text text-muted"><?= esc($row['created_at']); ?></p>
 
-                            <a href="<?= base_url('download/' . $row['filename']); ?>" class="btn btn-sm" style="background-color: #254336; color: white;">Download</a>
-                            <a href="<?= base_url('edit/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #E0A75E; color: white;">Edit</a>
-                            <a href="<?= base_url('delete/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #800000; color: white;">Delete</a>
+                            <div class="mt-auto">
+                                <a href="<?= base_url('download/' . $row['filename']); ?>" class="btn btn-sm" style="background-color: #254336; color: white;">Download</a>
+                                <a href="<?= base_url('edit/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #E0A75E; color: white;">Edit</a>
+                                <a href="<?= base_url('delete/' . $row['id']); ?>" class="btn btn-sm" style="background-color: #800000; color: white;" onclick="return confirm('Are you sure you want to delete this item?');">Delete</a>
+                            </div>
                         </div>
                     </div>
                 </div>
